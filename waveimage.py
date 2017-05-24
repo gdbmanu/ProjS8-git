@@ -2,57 +2,50 @@
 import numpy as np
 import scipy as sp
 import pywt
+import math
 
 
 class WaveImage:
 	
-	def __init__(self, image = np.zeros((32,32)), shape = (32, 32)):
-		if image.shape != shape :
-			image = np.zeros(shape)
+	#def isPuiss2(self):
+	#	return int(math.log(self.__shape[0], 2)) ==  math.log(self.__shape[0], 2) #shape[0] == 2**(h_max - 1) and shape[1] == 2**(h_max - 1)			
+	
+	def __init__(self, image = None, shape = (32, 32)):
 		
-		self.__shape = image.shape
-		
-		# Decomposition ondelettes
-		coeffs = pywt.wavedec2(image, 'haar')
-		h_max = len(coeffs)
-		
-		# Test puissance de 2
-		self.__puiss2 = shape[0] == 2**(h_max - 1) and shape[1] == 2**(h_max - 1)
-		
-		# L'attribut data contient les vecteurs en position [h][u] 
-		self.__data = {-1 : {-1 : coeffs[0][0, 0]}}
-		if self.isPuiss2():
-			#coeffs[0] est la cste; coeffs[1] le vect a 3 coord
-			print 'isPuiss2 = TRUE'
-			self.__data[0] = {}
-			self.__data[0][(0,0)] = np.append(coeffs[1][0], coeffs[1][1])
-			self.__data[0][(0,0)] = np.append(self.__data[0][(0,0)], coeffs[1][2])
-			self.__h_max = h_max - 1
-			for h in range(1, self.__h_max):
-				(i_max, j_max) = coeffs[h + 1][0].shape
-				self.__data[h] = {}
-				for i in range(i_max):
-					for j in range(j_max):
-						data = np.append(coeffs[h + 1][0][i][j], coeffs[h + 1][1][i][j])
-						data = np.append(data, coeffs[h + 1][2][i][j])
-						self.__data[h][(i, j)] = data
+		# Attribut shape
+		if image is not None:
+			# Decomposition ondelettes
+			coeffs = pywt.wavedec2(image, 'haar')
+			self.__shape = image.shape
 		else:
-			#coeffs[0] contient un vect a 4 coord
-			self.__h_max = h_max
-			self.__data[0] = {}
-			self.__data[0][(0,0)] = np.append(coeffs[0][0][1], coeffs[0][1][0])
-			self.__data[0][(0,0)] = np.append(self.__data[0][(0,0)], coeffs[0][1][1])
-			for h in range(1, self.__h_max):
-				(i_max, j_max) = coeffs[h][0].shape
+			self.__shape = shape		
+		
+		# Attribut h_max : profondeur de l'image
+		self.__h_max = min(int(math.log(self.__shape[0], 2)) + 1, 	int(math.log(self.__shape[1], 2)) + 1)
+			
+		# Attribut data : L'attribut data contient les vecteurs en position [h][u] (dictionnaire)
+		if image is not None:
+			self.__data = {}
+			for h in range(self.__h_max):
 				self.__data[h] = {}
+				if h == 0:
+					(i_max, j_max) = coeffs[h].shape
+				else:
+					(i_max, j_max) = coeffs[h][0].shape
 				for i in range(i_max):
 					for j in range(j_max):
-						data = np.append(coeffs[h][0][i][j], coeffs[h][1][i][j])
-						data = np.append(data, coeffs[h][2][i][j])	
-						self.__data[h][(i, j)] = data
+						if h == 0:
+							data = coeffs[h][i][j]
+						else:
+							data = coeffs[h][0][i][j]
+							for k in range(1,len(coeffs[h])):
+								data = np.append(data, coeffs[h][k][i][j])	
+						self.__data[h][(i, j)] = data				
+		else: # image is None
+			self.__data = {}
+			for h in range(self.__h_max):
+				self.__data[h] = {}
 					
-	def isPuiss2(self):
-		return self.__puiss2
 		
 	def getData(self):
 		return self.__data
@@ -60,12 +53,16 @@ class WaveImage:
 	def getH_max(self):
 		return self.__h_max
 		
+	def getImage(self):
+		coeffs = []
+		for h in range(self.__h_max):
+			
+		
+		
 	def __str__(self):
 		h_max = len(self.__data)
-		print 'h_max :', h_max, self.__h_max
-		s = ''
-		for h in range(-1, self.__h_max):
-			print h
+		s = 'h_max :' + str(self.__h_max) + '\n'
+		for h in range(self.__h_max):
 			s += '***' + str(h) + '***\n'
 			s += str(self.__data[h]) + '\n'
 		return s
