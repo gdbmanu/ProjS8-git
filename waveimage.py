@@ -5,6 +5,7 @@ import pywt
 
 
 class WaveImage:
+	
 	def __init__(self, image = np.zeros((32,32)), shape = (32, 32)):
 		if image.shape != shape :
 			image = np.zeros(shape)
@@ -55,6 +56,9 @@ class WaveImage:
 		
 	def getData(self):
 		return self.__data
+		
+	def getH_max(self):
+		return self.__h_max
 		
 	def __str__(self):
 		h_max = len(self.__data)
