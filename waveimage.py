@@ -56,7 +56,21 @@ class WaveImage:
 	def getImage(self):
 		coeffs = []
 		for h in range(self.__h_max):
-			
+			if h == 0:
+				dim_i = int(math.ceil(self.__shape[0] * 1. / 2**(self.__h_max - h -1)))
+				dim_j = int(math.ceil(self.__shape[1] * 1. / 2**(self.__h_max - h - 1)))
+				coeffs_h = np.zeros((dim_i, dim_j))
+				for u in self.__data[h]:
+					coeffs_h[u[0],u[1]] = self.__data[h][u]
+			else:
+				dim_i = int(math.ceil(self.__shape[0] * 1. / 2**(self.__h_max - h)))
+				dim_j = int(math.ceil(self.__shape[1] * 1. / 2**(self.__h_max - h)))
+				coeffs_h = [np.zeros((dim_i, dim_j)), np.zeros((dim_i, dim_j)), np.zeros((dim_i, dim_j))]
+				for u in self.__data[h]:
+					for k in range(3):
+						coeffs_h[k][u[0],u[1]] = self.__data[h][u][k]
+			coeffs += [coeffs_h]
+		return pywt.waverec2(coeffs, 'haar')	
 		
 		
 	def __str__(self):
