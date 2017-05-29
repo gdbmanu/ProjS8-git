@@ -57,7 +57,7 @@ class WaveImage:
 		coeffs = []
 		for h in range(self.__h_max):
 			if h == 0:
-				dim_i = int(math.ceil(self.__shape[0] * 1. / 2**(self.__h_max - h -1)))
+				dim_i = int(math.ceil(self.__shape[0] * 1. / 2**(self.__h_max - h - 1)))
 				dim_j = int(math.ceil(self.__shape[1] * 1. / 2**(self.__h_max - h - 1)))
 				coeffs_h = np.zeros((dim_i, dim_j))
 				for u in self.__data[h]:
