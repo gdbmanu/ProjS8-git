@@ -7,8 +7,6 @@ import math
 
 class WaveImage:
 	
-	#def isPuiss2(self):
-	#	return int(math.log(self.__shape[0], 2)) ==  math.log(self.__shape[0], 2) #shape[0] == 2**(h_max - 1) and shape[1] == 2**(h_max - 1)			
 	
 	def __init__(self, image = None, shape = (32, 32)):
 		
@@ -50,7 +48,7 @@ class WaveImage:
 	def getData(self):
 		return self.__data
 		
-	def getH_max(self):
+	def getHmax(self):
 		return self.__h_max
 		
 	def getImage(self):
@@ -71,6 +69,28 @@ class WaveImage:
 						coeffs_h[k][u[0],u[1]] = self.__data[h][u][k]
 			coeffs += [coeffs_h]
 		return pywt.waverec2(coeffs, 'haar')	
+		
+	def add_coeffs(self, waveImage, u, h_ref = 0):
+		if self.__data[0] == {}:
+			self.__data[0][(0,0)] = np.copy(waveImage.getData()[0][(0,0)])
+		else:
+			v_test = self.__data[0][(0,0)]
+			if np.linalg.norm(v_test) < 1e-16:
+				for u_0 in waveImage.getData()[0]:
+					self.__data[0][u_0] = np.copy(waveImage.getData()[0][u_0])
+		for h in range(1, h_ref) :
+			h_opp = self.__h_max - h
+			i = int(u[0] / 2**h_opp) 
+			j = int(u[1] / 2**h_opp)
+			#print i, j
+			if (i,j) in self.__data[h]:
+				v_test = self.__data[h][(i,j)]
+				if np.linalg.norm(v_test) < 1e-16:
+					self.__data[h][(i,j)] = np.copy(waveImage.getData()[h][(i,j)])
+			else: 
+				self.__data[h][(i,j)] = np.copy(waveImage.getData()[h][(i,j)])
+				
+			
 		
 		
 	def __str__(self):
