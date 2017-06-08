@@ -14,6 +14,14 @@ def calc_dim(shape, h, h_max):
 		dim_j = int(math.ceil(shape[1] * 1. / 2**(h_max - h)))
 	return dim_i, dim_j
 
+def mnist_reshape_32(x, i_offset = 0, j_offset = 0):
+    assert x.shape == (28 * 28,)
+    image = x.reshape(28, 28)
+    image = np.append(np.zeros((16 + 2, 28)), image, axis = 0)
+    image = np.append(image, np.zeros((16 + 2, 28)), axis = 0)
+    image = np.append(np.zeros((32 + 32, 16 + 2)), image, axis = 1)
+    image = np.append(image, np.zeros((32 + 32, 16 + 2)), axis = 1)
+    return image[16 + i_offset : 48 + i_offset, 16 + j_offset : 48 + j_offset]
 
 class WaveImage:
 	
