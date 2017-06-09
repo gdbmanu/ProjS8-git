@@ -14,6 +14,14 @@ def calc_dim(shape, h, h_max):
 		dim_j = int(math.ceil(shape[1] * 1. / 2**(h_max - h)))
 	return dim_i, dim_j
 
+def calc_U(shape, h, h_max): #dim_i, dim_j):
+    dim_i, dim_j = calc_dim(shape, h, h_max)
+    U = []
+    for i in range(dim_i):
+        for j in range(dim_j):
+            U += [(i, j)]
+    return U
+
 def mnist_reshape_32(x, i_offset = 0, j_offset = 0):
     assert x.shape == (28 * 28,)
     image = x.reshape(28, 28)
