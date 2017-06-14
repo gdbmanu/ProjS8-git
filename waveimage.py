@@ -72,7 +72,10 @@ class WaveImage:
 		
 	def get_data(self):
 		return self.__data
-		
+	
+	def get_shape(self):
+		return self.__data
+				
 	def set_data(self, h, u, v):
 		assert 0 <= h < self.__h_max
 		dim_i, dim_j = calc_dim(self.__shape, h, self.__h_max)
@@ -158,6 +161,7 @@ class WaveDict:
 				for i in range(dim_i):
 					for j in range(dim_j):
 						self.__data[c][h][(i, j)] = []
+		self.__nb_classes = nb_classes
 						
 	def get_shape(self):
 		return self.__shape
@@ -165,8 +169,16 @@ class WaveDict:
 	def get_h_max(self):
 		return self.__h_max
 		
-	def gat_data(self):
+	def get_data(self):
 		return self.__data
+		
+	def add(c, h, u, v):
+		assert 0 <= c < self.__nb_classes
+		assert 0 <= h < self.__h_max
+		if u in Data[c][h]:
+			self.__data[c][h][u] += [v]
+		else:
+			self.__data[c][h][u] = [v]
 				
 		
 	
