@@ -37,6 +37,7 @@ def affiche_records(records, liste_NB_TRIALS):
     mem_classif = []
     mem_saccades = []
     mem_coeffs = []
+    mem_compression_rate = []
     mem_posterior = []
     mem_entropy = []
     POL = records[0].POL
@@ -50,6 +51,8 @@ def affiche_records(records, liste_NB_TRIALS):
             mem_classif += [records[ind_total].success]
             mem_saccades += [records[ind_total].nb_saccades]
             mem_coeffs += [records[ind_total].nb_coeffs]
+            compression_rate = 100 * (1 - records[ind_total].nb_coeffs / 28. / 28.)  
+            mem_compression_rate += [compression_rate]
             pi = records[ind_total].mem_pi[-1]
             mem_posterior += [pi[records[ind_total].z_final]] 
             mem_entropy += [records[ind_total].mem_H[-1]]
@@ -62,8 +65,8 @@ def affiche_records(records, liste_NB_TRIALS):
     print 'classif rate :', classif_rate
     print 'nb_saccades :', np.mean(mem_saccades)  
     print 'nb_coeffs :', np.mean(mem_coeffs)  
-    compression_rate = 100 * (1 - np.mean(mem_coeffs) / 28 / 28)  
-    print 'compression rate :',  compression_rate
+    #compression_rate = 100 * (1 - np.mean(mem_coeffs) / 28 / 28)  
+    print 'compression rate :',  np.mean(mem_compression_rate)
     print 'final posterior :', np.mean(mem_posterior)
     print 'final entropy :', np.mean(mem_entropy)
 
@@ -80,5 +83,5 @@ def affiche_records(records, liste_NB_TRIALS):
     plt.yticks([])
     plt.xlim([0,31])
     
-    return classif_rate, mem_saccades, compression_rate
+    return classif_rate, mem_saccades, mem_compression_rate
     

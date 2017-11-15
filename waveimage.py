@@ -3,7 +3,7 @@ import scipy as sp
 import pywt
 import math
 
-# Hierarchical Wavelet image encoding on B/W images
+# Tree strcture representation of an image
 # intended to be used on the MNIST database
 
 def calc_dim(shape, h, h_max):
